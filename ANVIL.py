@@ -13,7 +13,7 @@ Responsibilities:
     - Canonical serialization and SHA-256 integrity signatures
     - Governance data models (envelopes, execution state, audit events)
     - Module registry, discovery, and dependency-injected execution runtime
-    - DAG-based execution lineage and named integrity anchors
+    - DAG-based execution lineage and named integrity checkpoints
     - Audit ledger, telemetry, event bus, and health monitoring services
     - GsaKernel: the top-level entry point that wires all of the above
 
@@ -56,7 +56,7 @@ import traceback
 import uuid
 
 from abc import ABC, abstractmethod
-from dataclasses import asdict, dataclass, field, is_dataclass, replace
+from dataclasses import asdict, dataclass, field, fields as dataclass_fields, is_dataclass, replace
 from datetime import datetime, timezone
 from decimal import Decimal
 from enum import Enum
@@ -405,7 +405,17 @@ class CanonicalSerializer:
         if isinstance(value, Path):
             return str(value)
         if is_dataclass(value):
-            return CanonicalSerializer.normalize(asdict(value))
+            # NOTE (v1.1 fix): previously used stdlib dataclasses.asdict(),
+            # which internally deep-copies any field it doesn't recognize
+            # (dict/list/tuple/namedtuple/dataclass) - including the
+            # MappingProxyType objects produced by deep_freeze(). That
+            # deepcopy raises TypeError: cannot pickle 'mappingproxy'
+            # object, which silently failed every real execution's
+            # integrity commit. Recursing through our own normalize()
+            # field-by-field avoids relying on asdict's deepcopy fallback.
+            return CanonicalSerializer.normalize(
+                {f.name: getattr(value, f.name) for f in dataclass_fields(value)}
+            )
         if isinstance(value, Mapping):
             return {
                 str(key): CanonicalSerializer.normalize(item)
@@ -531,9 +541,9 @@ class StateLineage:
 
     def __init__(
         self,
-        genesis: str = "GENESIS_ANCHOR",
+        root_state: str = "ROOT_STATE",
     ):
-        self._chain = [genesis]
+        self._chain = [root_state]
 
     @property
     def chain(self) -> tuple[str, ...]:
@@ -686,7 +696,7 @@ class ExecutionState:
 
     status: RuntimeStatus = RuntimeStatus.INITIALIZED
 
-    current_hash: str = "GENESIS_ANCHOR"
+    current_hash: str = "ROOT_STATE"
 
     previous_hash: Optional[str] = None
 
@@ -791,7 +801,7 @@ Integrates envelope state with cryptographic lineage.
 Provides:
 - Envelope fingerprinting
 - State transitions
-- Anchor tracking
+- Checkpoint tracking
 - Branch lineage
 - Replay verification
 - Integrity validation
@@ -821,17 +831,17 @@ class IntegritySnapshot:
 
 
 # =============================================================================
-# Anchor Registry
+# Checkpoint Registry
 # =============================================================================
 
 
 @dataclass(frozen=True)
-class IntegrityAnchor:
+class IntegrityCheckpoint:
     """
     Named immutable checkpoint.
     """
 
-    anchor_id: str
+    checkpoint_id: str
 
     hash_value: str
 
@@ -840,53 +850,53 @@ class IntegrityAnchor:
     iteration: int
 
 
-class AnchorRegistry:
+class CheckpointRegistry:
     """
     Maintains execution checkpoints.
     """
 
     def __init__(self):
-        self._anchors: Dict[str, IntegrityAnchor] = {}
+        self._checkpoints: Dict[str, IntegrityCheckpoint] = {}
 
     def create(
         self,
-        anchor_id: str,
+        checkpoint_id: str,
         envelope: GsaContextEnvelope,
         actor: str,
-    ) -> IntegrityAnchor:
+    ) -> IntegrityCheckpoint:
 
         snapshot_hash = IntegrityManager.fingerprint(envelope)
 
-        anchor = IntegrityAnchor(
-            anchor_id=anchor_id,
+        checkpoint = IntegrityCheckpoint(
+            checkpoint_id=checkpoint_id,
             hash_value=snapshot_hash,
             created_by=actor,
             iteration=envelope.metadata.iteration,
         )
 
-        self._anchors[anchor_id] = anchor
+        self._checkpoints[checkpoint_id] = checkpoint
 
-        return anchor
+        return checkpoint
 
     def get(
         self,
-        anchor_id: str,
-    ) -> Optional[IntegrityAnchor]:
+        checkpoint_id: str,
+    ) -> Optional[IntegrityCheckpoint]:
 
-        return self._anchors.get(anchor_id)
+        return self._checkpoints.get(checkpoint_id)
 
     def verify(
         self,
-        anchor_id: str,
+        checkpoint_id: str,
         envelope: GsaContextEnvelope,
     ) -> bool:
 
-        anchor = self.get(anchor_id)
+        checkpoint = self.get(checkpoint_id)
 
-        if not anchor:
+        if not checkpoint:
             return False
 
-        return anchor.hash_value == IntegrityManager.fingerprint(envelope)
+        return checkpoint.hash_value == IntegrityManager.fingerprint(envelope)
 
 
 # =============================================================================
@@ -1679,6 +1689,13 @@ class GsaGovernanceRuntime:
 
         elapsed = time.time() - started
 
+        # NOTE (v1.1 fix): status was never advanced past its default
+        # (INITIALIZED) on the success path - only the failure path set a
+        # status at all. A successful run and one that hadn't finished yet
+        # were indistinguishable by status alone. update_status() already
+        # existed on the envelope but was never called.
+        envelope = envelope.update_status(RuntimeStatus.COMPLETED)
+
         event = AuditEvent(
             event_type="EXECUTION_COMPLETE",
             severity=GovernanceSeverity.INFO,
@@ -1970,7 +1987,7 @@ Responsibilities:
 - Immutable lineage graph
 - Branch creation
 - Branch merging
-- Anchor restoration
+- Checkpoint restoration
 - Conflict detection
 - Replay path discovery
 """
@@ -2565,7 +2582,23 @@ class GsaKernel:
 
         self.dag = GovernanceDag()
 
-        self.anchors = AnchorRegistry()
+        # NOTE (v1.1 fix): every real node's parent_nodes can point back to
+        # the "ROOT_STATE" sentinel, but add_node() requires every
+        # referenced parent to already exist in the graph. Without seeding
+        # an actual root-state node here, the very first execution recorded
+        # after a fresh GsaKernel() raised "Missing parent node:
+        # ROOT_STATE". Seeding it once at construction makes the root
+        # a real, lookup-able node like everything else in the chain.
+        self.dag.add_node(
+            GovernanceNode(
+                node_id="ROOT_STATE",
+                execution_hash="ROOT_STATE",
+                actor="GSA:Kernel:Root",
+                iteration=0,
+            )
+        )
+
+        self.checkpoints = CheckpointRegistry()
 
         self.runtime = GsaGovernanceRuntime(
             dependencies=GsaDependencies(
@@ -2582,18 +2615,47 @@ class GsaKernel:
         self,
         module_name: str,
         payload: dict[str, Any],
+        continue_from: Optional[GsaContextEnvelope] = None,
     ) -> GsaContextEnvelope:
+        """
+        Runs a module through the governed pipeline.
+
+        By default, each call starts its own independent, one-step chain
+        rooted at ROOT_STATE - calling execute() twice in a row for the
+        same module does not connect them to each other.
+
+        Pass the envelope returned from a previous execute() call as
+        `continue_from` to explicitly link this call onto that one,
+        extending the same chain instead of starting a new one. ANVIL
+        itself has no opinion on what should count as "one chain" (a
+        phone call, a hiring evaluation, a user session, a document's
+        lifetime, etc.) - that decision belongs entirely to the caller.
+        """
 
         descriptor = self.registry.get(module_name)
 
         module = descriptor.module_class()
 
-        envelope = GsaContextEnvelope(
-            payload_data=deep_freeze(payload),
-            metadata=ExecutionMetadata(
-                module_identity=descriptor.identity,
-            ),
-        )
+        if continue_from is not None:
+            envelope = GsaContextEnvelope(
+                payload_data=deep_freeze(payload),
+                metadata=replace(
+                    continue_from.metadata,
+                    module_identity=descriptor.identity,
+                    trace_id=uuid4().hex,
+                ),
+                execution_state=ExecutionState(
+                    current_hash=continue_from.execution_state.current_hash,
+                    chain_depth=continue_from.execution_state.chain_depth,
+                ),
+            )
+        else:
+            envelope = GsaContextEnvelope(
+                payload_data=deep_freeze(payload),
+                metadata=ExecutionMetadata(
+                    module_identity=descriptor.identity,
+                ),
+            )
 
         adapter = GsaUniversalAdapter(
             module,
@@ -2619,19 +2681,29 @@ class GsaKernel:
         identity: ModuleIdentity,
     ) -> None:
 
-        node_id = create_deterministic_id(
-            envelope.execution_state.previous_hash or "GENESIS_ANCHOR",
-            identity.qualified_name,
-            envelope.metadata.iteration,
-        )
+        # NOTE (v1.1 fix): node_id was previously derived only from
+        # (parent_hash, actor, iteration). Two independent calls to the
+        # same module (no continue_from link between them) produce
+        # identical values for all three, so the DAG rejected the second
+        # one as "already exists." The envelope's own integrity hash is
+        # already unique per execution - it factors in the trace_id and
+        # payload - so use it directly instead of a separate derivation
+        # that didn't have enough information to tell calls apart.
+        node_id = envelope.execution_state.current_hash
 
         node = GovernanceNode(
             node_id=node_id,
             execution_hash=envelope.execution_state.current_hash,
             actor=identity.qualified_name,
             iteration=envelope.metadata.iteration,
+            # NOTE (v1.1 fix): the parentheses here previously had no
+            # trailing comma, so this evaluated to a bare string (e.g.
+            # "ROOT_STATE") instead of a one-element tuple. add_node()
+            # then iterated the string character-by-character and rejected
+            # the first character ("G") as a missing parent node - every
+            # second-or-later execution in a chain failed here.
             parent_nodes=(
-                (envelope.execution_state.previous_hash)
+                (envelope.execution_state.previous_hash,)
                 if envelope.execution_state.previous_hash
                 else ()
             ),
@@ -2643,15 +2715,15 @@ class GsaKernel:
     # Kernel Utilities
     # =============================================================================
 
-    def create_anchor(
+    def create_checkpoint(
         self,
-        anchor_id: str,
+        checkpoint_id: str,
         envelope: GsaContextEnvelope,
         actor: str,
-    ) -> IntegrityAnchor:
+    ) -> IntegrityCheckpoint:
 
-        return self.anchors.create(
-            anchor_id,
+        return self.checkpoints.create(
+            checkpoint_id,
             envelope,
             actor,
         )
