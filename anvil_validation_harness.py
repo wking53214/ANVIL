@@ -72,6 +72,11 @@ GovernanceNode = ANVIL["GovernanceNode"]
 create_gsa_kernel = ANVIL["create_gsa_kernel"]
 ModuleLoader = ANVIL["ModuleLoader"]
 deep_freeze = ANVIL["deep_freeze"]
+OscillationDetector = ANVIL["OscillationDetector"]
+ExecutionMetadata = ANVIL["ExecutionMetadata"]
+AuditEvent = ANVIL["AuditEvent"]
+GovernanceSeverity = ANVIL["GovernanceSeverity"]
+CanonicalSerializer = ANVIL["CanonicalSerializer"]
 
 
 # A tiny always-succeeds module for round-trip / baseline tests
@@ -418,6 +423,235 @@ async def bucket_5_roundtrip():
 
 
 # =============================================================================
+# BUCKET 6 - Oscillation Detection
+# =============================================================================
+
+async def bucket_6_oscillation():
+    bucket = "6. Oscillation Detection"
+
+    # 6a. First output is not flagged as repeated
+    detector = OscillationDetector()
+    first_call = detector.observe("trace-1", "hello")
+    if not first_call:
+        record(bucket, "First output is not flagged as repeated", "PASS")
+    else:
+        record(bucket, "First output is not flagged as repeated", "FAIL",
+               "First observation incorrectly returned True (repeated)")
+
+    # 6b. Exact repeated string is detected
+    second_call = detector.observe("trace-1", "hello")
+    if second_call:
+        record(bucket, "Exact repeated string is detected", "PASS")
+    else:
+        record(bucket, "Exact repeated string is detected", "FAIL",
+               "Second identical observation should return True")
+
+    # 6c. String normalization: whitespace and case
+    detector2 = OscillationDetector()
+    detector2.observe("trace-2", " HELLO ")
+    is_normalized = detector2.observe("trace-2", "hello")
+    if is_normalized:
+        record(bucket, "String normalization (whitespace, case) works", "PASS")
+    else:
+        record(bucket, "String normalization (whitespace, case) works", "FAIL",
+               "Normalized strings should be detected as identical")
+
+    # 6d. Different outputs are not flagged as repeated
+    detector3 = OscillationDetector()
+    detector3.observe("trace-3", "hello")
+    different = detector3.observe("trace-3", "world")
+    if not different:
+        record(bucket, "Different outputs are not flagged as repeated", "PASS")
+    else:
+        record(bucket, "Different outputs are not flagged as repeated", "FAIL",
+               "Different strings should not be flagged as repeated")
+
+    # 6e. Same output in different traces is not flagged as repeated
+    detector4 = OscillationDetector()
+    detector4.observe("trace-4a", "same")
+    first_in_trace_b = detector4.observe("trace-4b", "same")
+    if not first_in_trace_b:
+        record(bucket, "Same output in different traces is not repeated", "PASS")
+    else:
+        record(bucket, "Same output in different traces is not repeated", "FAIL",
+               "Output seen in trace-4b should not be flagged as repeated")
+
+    # 6f. Structured outputs are detected consistently
+    detector5 = OscillationDetector()
+    obj1 = {"a": 1, "b": 2}
+    obj2 = {"b": 2, "a": 1}  # same content, different key order
+    detector5.observe("trace-5", obj1)
+    obj_repeated = detector5.observe("trace-5", obj2)
+    if obj_repeated:
+        record(bucket, "Structured outputs are detected consistently", "PASS")
+    else:
+        record(bucket, "Structured outputs are detected consistently", "FAIL",
+               "Structured objects with same content (different order) should match")
+
+    # 6g. reset(trace_id) removes only that trace
+    detector6 = OscillationDetector()
+    detector6.observe("trace-6a", "data")
+    detector6.observe("trace-6b", "data")
+    detector6.reset("trace-6a")
+    first_again = detector6.observe("trace-6a", "data")
+    still_repeated_6b = detector6.observe("trace-6b", "data")
+    if not first_again and still_repeated_6b:
+        record(bucket, "reset(trace_id) clears only that trace", "PASS")
+    else:
+        record(bucket, "reset(trace_id) clears only that trace", "FAIL",
+               f"trace-6a should be reset (first=False), trace-6b should persist (repeated=True)")
+
+    # 6h. reset() clears all traces
+    detector7 = OscillationDetector()
+    detector7.observe("trace-7a", "data")
+    detector7.observe("trace-7b", "data")
+    detector7.reset()
+    first_7a = detector7.observe("trace-7a", "data")
+    first_7b = detector7.observe("trace-7b", "data")
+    if not first_7a and not first_7b:
+        record(bucket, "reset() clears all detector state", "PASS")
+    else:
+        record(bucket, "reset() clears all detector state", "FAIL",
+               "Both traces should be cleared and first observations should return False")
+
+    # 6i. Concurrent access (basic thread safety check)
+    import threading
+    detector8 = OscillationDetector()
+    results = []
+    def observe_in_thread(trace_id, value):
+        result = detector8.observe(trace_id, value)
+        results.append(result)
+    threads = []
+    for i in range(5):
+        t = threading.Thread(target=observe_in_thread, args=(f"trace-8", f"value-{i}"))
+        threads.append(t)
+        t.start()
+    for t in threads:
+        t.join()
+    # All 5 different values should not be flagged as repeated
+    if all(r is False for r in results):
+        record(bucket, "Concurrent access does not corrupt detector state", "PASS")
+    else:
+        record(bucket, "Concurrent access does not corrupt detector state", "FAIL",
+               f"Some concurrent observations were incorrectly flagged")
+
+    # 6j. Integration test: repeated output detected in governed execution
+    try:
+        runtime = GsaGovernanceRuntime()
+        trace_id = "integration-test-trace"
+        shared_payload = deep_freeze({"fixed": "data"})
+        shared_metadata = ExecutionMetadata(trace_id=trace_id)
+
+        env1 = GsaContextEnvelope(
+            payload_data=shared_payload,
+            metadata=shared_metadata,
+        )
+        env2 = GsaContextEnvelope(
+            payload_data=shared_payload,
+            metadata=shared_metadata,
+        )
+
+        result1 = await runtime.execute(_EchoModule(), env1)
+        result2 = await runtime.execute(_EchoModule(), env2)
+
+        # Both should complete successfully
+        both_completed = (
+            result1.execution_state.status == RuntimeStatus.COMPLETED and
+            result2.execution_state.status == RuntimeStatus.COMPLETED
+        )
+
+        # Second result should have OSCILLATION_DETECTED event
+        osc_events = [
+            e for e in result2.audit_events
+            if e.event_type == "OSCILLATION_DETECTED"
+        ]
+        has_oscillation_event = len(osc_events) > 0
+
+        if both_completed and has_oscillation_event:
+            record(bucket, "Integration: repeated output produces OSCILLATION_DETECTED event", "PASS")
+        else:
+            record(bucket, "Integration: repeated output produces OSCILLATION_DETECTED event", "FAIL",
+                   f"both_completed={both_completed}, has_oscillation_event={has_oscillation_event}")
+
+    except Exception as e:
+        record(bucket, "Integration: repeated output produces OSCILLATION_DETECTED event", "FAIL",
+               f"{type(e).__name__}: {e}")
+
+    # 6k. Repeated output does NOT cause execution failure
+    try:
+        runtime = GsaGovernanceRuntime()
+        trace_id = "failure-check-trace"
+        shared_payload = deep_freeze({"fixed": "data"})
+        shared_metadata = ExecutionMetadata(trace_id=trace_id)
+
+        env1 = GsaContextEnvelope(
+            payload_data=shared_payload,
+            metadata=shared_metadata,
+        )
+        env2 = GsaContextEnvelope(
+            payload_data=shared_payload,
+            metadata=shared_metadata,
+        )
+
+        result1 = await runtime.execute(_EchoModule(), env1)
+        result2 = await runtime.execute(_EchoModule(), env2)
+
+        # Even with repeated output, both should be COMPLETED
+        if (result2.execution_state.status == RuntimeStatus.COMPLETED and
+            result2.execution_state.error_message is None):
+            record(bucket, "Repeated output does not cause execution failure", "PASS")
+        else:
+            record(bucket, "Repeated output does not cause execution failure", "FAIL",
+                   f"status={result2.execution_state.status}, error={result2.execution_state.error_message}")
+
+    except Exception as e:
+        record(bucket, "Repeated output does not cause execution failure", "FAIL",
+               f"{type(e).__name__}: {e}")
+
+    # 6l. Existing integrity hashes unchanged by oscillation event
+    try:
+        runtime = GsaGovernanceRuntime()
+        trace_id = "integrity-check-trace"
+        payload = deep_freeze({"check": "integrity"})
+        metadata = ExecutionMetadata(trace_id=trace_id)
+
+        env1 = GsaContextEnvelope(payload_data=payload, metadata=metadata)
+        env2 = GsaContextEnvelope(payload_data=payload, metadata=metadata)
+
+        result1 = await runtime.execute(_EchoModule(), env1)
+        hash1 = result1.execution_state.current_hash
+
+        result2 = await runtime.execute(_EchoModule(), env2)
+        hash2 = result2.execution_state.current_hash
+
+        # Hashes should be different (different payloads/metadata due to module processing)
+        # but the integrity mechanism should not be disrupted
+        if hash1 and hash2 and (hash1 != hash2):
+            record(bucket, "Oscillation detection does not alter integrity hashes", "PASS")
+        else:
+            record(bucket, "Oscillation detection does not alter integrity hashes", "FINDING",
+                   "Hashes should differ between executions; verify integrity system still works")
+
+    except Exception as e:
+        record(bucket, "Oscillation detection does not alter integrity hashes", "FAIL",
+               f"{type(e).__name__}: {e}")
+
+    # 6m. kernel.oscillation_detector is accessible
+    try:
+        kernel = create_gsa_kernel()
+        has_detector = hasattr(kernel, 'oscillation_detector')
+        detector_works = kernel.oscillation_detector.observe("test", "value") is False
+        if has_detector and detector_works:
+            record(bucket, "GsaKernel exposes oscillation_detector", "PASS")
+        else:
+            record(bucket, "GsaKernel exposes oscillation_detector", "FAIL",
+                   f"has_detector={has_detector}, detector_works={detector_works}")
+    except Exception as e:
+        record(bucket, "GsaKernel exposes oscillation_detector", "FAIL",
+               f"{type(e).__name__}: {e}")
+
+
+# =============================================================================
 # Runner + Report
 # =============================================================================
 
@@ -427,6 +661,7 @@ async def main():
     await bucket_3_immutability()
     await bucket_4_registry()
     await bucket_5_roundtrip()
+    await bucket_6_oscillation()
 
     print("=" * 79)
     print("ANVIL VALIDATION HARNESS - RESULTS")

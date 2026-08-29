@@ -1538,17 +1538,20 @@ class GsaGovernanceRuntime:
     2. Validate
     3. Evaluate policy
     4. Execute module
-    5. Verify integrity
-    6. Commit state transition
-    7. Emit audit/telemetry
+    5. Observe output for oscillation
+    6. Verify integrity
+    7. Commit state transition
+    8. Emit audit/telemetry
     """
 
     def __init__(
         self,
         dependencies: Optional[GsaDependencies] = None,
+        oscillation_detector: Optional[OscillationDetector] = None,
     ):
 
         self.dependencies = dependencies or create_default_dependencies()
+        self.oscillation_detector = oscillation_detector or OscillationDetector()
 
     async def execute(
         self,
@@ -1577,6 +1580,11 @@ class GsaGovernanceRuntime:
                     envelope=envelope,
                     module=context.module,
                 )
+            )
+
+            envelope = self._observe_oscillation(
+                envelope,
+                context.module,
             )
 
             envelope = self._commit_integrity(
@@ -1658,6 +1666,37 @@ class GsaGovernanceRuntime:
             if not result.passed:
 
                 raise AuthorizationException("Policy rejected execution")
+
+        return envelope
+
+    def _observe_oscillation(
+        self,
+        envelope: GsaContextEnvelope,
+        module: ModuleIdentity,
+    ) -> GsaContextEnvelope:
+
+        try:
+            is_repeated = self.oscillation_detector.observe(
+                envelope.metadata.trace_id,
+                envelope.payload_data,
+            )
+
+            if is_repeated:
+                event = AuditEvent(
+                    event_type="OSCILLATION_DETECTED",
+                    severity=GovernanceSeverity.INFO,
+                    trace_id=envelope.metadata.trace_id,
+                    actor=module.qualified_name,
+                    details={
+                        "module": module.qualified_name,
+                        "reason": "repeated execution output detected",
+                    },
+                )
+
+                envelope = envelope.add_audit_event(event)
+
+        except Exception:
+            pass
 
         return envelope
 
@@ -2249,6 +2288,98 @@ class GovernanceDag:
 
 
 # =============================================================================
+# Section 8B - Oscillation Detection
+# =============================================================================
+
+"""
+Execution-scoped repeated-output detection.
+
+Detects when a governed module produces the same output multiple times
+within a single execution trace. This is a behavioral signal only —
+detection does not alter execution semantics, halt execution, or modify
+integrity hashes. Policy may later interpret this signal.
+"""
+
+
+class OscillationDetector:
+    """
+    Tracks repeated outputs per execution trace.
+
+    Thread-safe, execution-scoped detector that normalizes module outputs
+    and records whether the same output has been seen before in the
+    current trace.
+    """
+
+    def __init__(self):
+        self._lock = RLock()
+        self._observed: Dict[str, Set[str]] = {}
+
+    def observe(
+        self,
+        trace_id: str,
+        output: Any,
+    ) -> bool:
+        """
+        Observes an output within a trace.
+
+        Normalizes the output using canonical serialization and checks
+        whether it has appeared before in this trace.
+
+        Args:
+            trace_id: Execution trace identifier
+            output: Module output (string, structured, or other)
+
+        Returns:
+            True if the normalized output was already observed in this trace
+            False if this is the first observation of this output
+        """
+        with self._lock:
+            normalized = self._normalize(output)
+
+            if trace_id not in self._observed:
+                self._observed[trace_id] = set()
+
+            seen = normalized in self._observed[trace_id]
+
+            self._observed[trace_id].add(normalized)
+
+            return seen
+
+    def reset(
+        self,
+        trace_id: Optional[str] = None,
+    ) -> None:
+        """
+        Clears detector state.
+
+        Args:
+            trace_id: If provided, clears only that trace.
+                      If None, clears all traces.
+        """
+        with self._lock:
+            if trace_id is None:
+                self._observed.clear()
+            else:
+                self._observed.pop(trace_id, None)
+
+    @staticmethod
+    def _normalize(value: Any) -> str:
+        """
+        Normalizes output for comparison.
+
+        Strings are stripped and lowercased.
+        Other values are canonically serialized.
+        """
+        if isinstance(value, str):
+            return value.strip().lower()
+
+        try:
+            return CanonicalSerializer.serialize(value)
+        except CanonicalSerializationException:
+            return str(value)
+
+
+# =============================================================================
 # Section 9 - Runtime Services Layer
 # =============================================================================
 
@@ -2606,6 +2737,8 @@ class GsaKernel:
                 telemetry_sink=self.services.telemetry,
             )
         )
+
+        self.oscillation_detector = self.runtime.oscillation_detector
 
     # =============================================================================
     # Module Execution
