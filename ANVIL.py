@@ -53,11 +53,10 @@ import os
 import platform
 import time
 import traceback
-import uuid
 
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass, field, fields as dataclass_fields, is_dataclass, replace
-from datetime import datetime, timezone
+from datetime import datetime
 from decimal import Decimal
 from enum import Enum
 from pathlib import Path
@@ -183,46 +182,6 @@ class ConfigurationException(GsaException):
 
 
 # =============================================================================
-# Time Utilities
-# =============================================================================
-def utc_timestamp() -> float:
-    """
-    Returns deterministic UTC epoch timestamp.
-    """
-    return time.time()
-
-
-def utc_iso_timestamp() -> str:
-    """
-    Returns ISO formatted UTC timestamp.
-    """
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
-
-
-# =============================================================================
-# Identifier Utilities
-# =============================================================================
-def create_trace_id() -> TraceId:
-    """
-    Generates execution trace identifier.
-    """
-    return uuid.uuid4().hex
-
-
-def create_deterministic_id(
-    parent_hash: str,
-    actor: str,
-    iteration: int,
-) -> str:
-    """
-    Creates deterministic execution identity.
-    Same inputs always produce the same ID.
-    """
-    source = f"{parent_hash}|" f"{actor}|" f"{iteration}"
-    return hashlib.sha256(source.encode("utf-8")).hexdigest()
-
-
-# =============================================================================
 # Immutable Structure Utilities
 # =============================================================================
 def deep_freeze(value: Any) -> Any:
@@ -252,33 +211,6 @@ def deep_thaw(value: Any) -> Any:
     if isinstance(value, frozenset):
         return {deep_thaw(item) for item in value}
     return copy.deepcopy(value)
-
-
-# =============================================================================
-# Dictionary Utilities
-# =============================================================================
-def merge_dicts(
-    base: Mapping[str, Any],
-    updates: Mapping[str, Any],
-) -> Dict[str, Any]:
-    """
-    Immutable dictionary merge.
-    """
-    merged = dict(base)
-    merged.update(updates)
-    return merged
-
-
-def require_keys(
-    payload: Mapping[str, Any],
-    required: Iterable[str],
-) -> None:
-    """
-    Validates required fields.
-    """
-    missing = [key for key in required if key not in payload]
-    if missing:
-        raise ValidationException(f"Missing required fields: {missing}")
 
 
 # =============================================================================
@@ -326,42 +258,6 @@ class AuditProvider(Protocol):
         self,
         event: Mapping[str, Any],
     ) -> None: ...
-
-
-# =============================================================================
-# Thread-Safe Primitive
-# =============================================================================
-class LockedRegistry:
-    """
-    Reusable thread-safe registry primitive.
-    """
-
-    def __init__(self):
-        self._lock = RLock()
-        self._entries: Dict[str, Any] = {}
-
-    def register(
-        self,
-        name: str,
-        value: Any,
-    ) -> None:
-        with self._lock:
-            if name in self._entries:
-                raise ConfigurationException(f"Duplicate registration: {name}")
-            self._entries[name] = value
-
-    def get(
-        self,
-        name: str,
-    ) -> Any:
-        with self._lock:
-            if name not in self._entries:
-                raise ConfigurationException(f"Unknown registry item: {name}")
-            return self._entries[name]
-
-    def list_items(self) -> Tuple[str, ...]:
-        with self._lock:
-            return tuple(self._entries.keys())
 
 
 # =============================================================================
@@ -519,19 +415,6 @@ class ChainVerifier:
         if not new_hash:
             return False
         return previous_hash != new_hash
-
-
-class ReplayValidator:
-    """
-    Ensures deterministic execution replay.
-    """
-
-    @staticmethod
-    def validate(
-        original_hash: str,
-        replay_hash: str,
-    ) -> bool:
-        return original_hash == replay_hash
 
 
 class StateLineage:
@@ -1512,15 +1395,6 @@ Responsibilities:
 - Telemetry collection
 - Fail-closed execution
 """
-
-
-# =============================================================================
-# Runtime Exceptions
-# =============================================================================
-
-
-class RuntimeExecutionException(GsaException):
-    code = "GSA_RUNTIME_EXECUTION_FAILURE"
 
 
 # =============================================================================

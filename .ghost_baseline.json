@@ -7,182 +7,14 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/ANVIL.py",
       "line_end": null,
       "line_start": null,
       "related_files": [],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.769855+00:00",
-    "id": "ghost-5452739a7741",
-    "layer": "mechanical",
-    "severity": "minor",
-    "status": "suppressed",
-    "summary": "'utc_timestamp' is defined but never referenced anywhere in the scanned set"
-  },
-  {
-    "category": "dead_code",
-    "confidence": null,
-    "detail": "No ast.Name, ast.Attribute, or string-subscript-key node anywhere in the scanned files resolves to this identifier. Scope limit: getattr-by-string and decorator-based registration are still not traced, so this can false-positive on names only reached that way -- confirm before deleting.",
-    "detector": "dead_code",
-    "disposition": null,
-    "disposition_note": "",
-    "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
-      "line_end": null,
-      "line_start": null,
-      "related_files": [],
-      "snippet": null
-    },
-    "first_seen": "2026-09-03T03:41:21.769938+00:00",
-    "id": "ghost-509c08dd0355",
-    "layer": "mechanical",
-    "severity": "minor",
-    "status": "suppressed",
-    "summary": "'utc_iso_timestamp' is defined but never referenced anywhere in the scanned set"
-  },
-  {
-    "category": "dead_code",
-    "confidence": null,
-    "detail": "No ast.Name, ast.Attribute, or string-subscript-key node anywhere in the scanned files resolves to this identifier. Scope limit: getattr-by-string and decorator-based registration are still not traced, so this can false-positive on names only reached that way -- confirm before deleting.",
-    "detector": "dead_code",
-    "disposition": null,
-    "disposition_note": "",
-    "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
-      "line_end": null,
-      "line_start": null,
-      "related_files": [],
-      "snippet": null
-    },
-    "first_seen": "2026-09-03T03:41:21.769950+00:00",
-    "id": "ghost-69f1feb80519",
-    "layer": "mechanical",
-    "severity": "minor",
-    "status": "suppressed",
-    "summary": "'create_trace_id' is defined but never referenced anywhere in the scanned set"
-  },
-  {
-    "category": "dead_code",
-    "confidence": null,
-    "detail": "No ast.Name, ast.Attribute, or string-subscript-key node anywhere in the scanned files resolves to this identifier. Scope limit: getattr-by-string and decorator-based registration are still not traced, so this can false-positive on names only reached that way -- confirm before deleting.",
-    "detector": "dead_code",
-    "disposition": null,
-    "disposition_note": "",
-    "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
-      "line_end": null,
-      "line_start": null,
-      "related_files": [],
-      "snippet": null
-    },
-    "first_seen": "2026-09-03T03:41:21.769959+00:00",
-    "id": "ghost-c97b900b283b",
-    "layer": "mechanical",
-    "severity": "minor",
-    "status": "suppressed",
-    "summary": "'create_deterministic_id' is defined but never referenced anywhere in the scanned set"
-  },
-  {
-    "category": "dead_code",
-    "confidence": null,
-    "detail": "No ast.Name, ast.Attribute, or string-subscript-key node anywhere in the scanned files resolves to this identifier. Scope limit: getattr-by-string and decorator-based registration are still not traced, so this can false-positive on names only reached that way -- confirm before deleting.",
-    "detector": "dead_code",
-    "disposition": null,
-    "disposition_note": "",
-    "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
-      "line_end": null,
-      "line_start": null,
-      "related_files": [],
-      "snippet": null
-    },
-    "first_seen": "2026-09-03T03:41:21.769967+00:00",
-    "id": "ghost-2ffefb1ed49c",
-    "layer": "mechanical",
-    "severity": "minor",
-    "status": "suppressed",
-    "summary": "'merge_dicts' is defined but never referenced anywhere in the scanned set"
-  },
-  {
-    "category": "dead_code",
-    "confidence": null,
-    "detail": "No ast.Name, ast.Attribute, or string-subscript-key node anywhere in the scanned files resolves to this identifier. Scope limit: getattr-by-string and decorator-based registration are still not traced, so this can false-positive on names only reached that way -- confirm before deleting.",
-    "detector": "dead_code",
-    "disposition": null,
-    "disposition_note": "",
-    "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
-      "line_end": null,
-      "line_start": null,
-      "related_files": [],
-      "snippet": null
-    },
-    "first_seen": "2026-09-03T03:41:21.769974+00:00",
-    "id": "ghost-d6c55c97e654",
-    "layer": "mechanical",
-    "severity": "minor",
-    "status": "suppressed",
-    "summary": "'require_keys' is defined but never referenced anywhere in the scanned set"
-  },
-  {
-    "category": "dead_code",
-    "confidence": null,
-    "detail": "No ast.Name, ast.Attribute, or string-subscript-key node anywhere in the scanned files resolves to this identifier. Scope limit: getattr-by-string and decorator-based registration are still not traced, so this can false-positive on names only reached that way -- confirm before deleting.",
-    "detector": "dead_code",
-    "disposition": null,
-    "disposition_note": "",
-    "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
-      "line_end": null,
-      "line_start": null,
-      "related_files": [],
-      "snippet": null
-    },
-    "first_seen": "2026-09-03T03:41:21.769981+00:00",
-    "id": "ghost-1529f3f0d833",
-    "layer": "mechanical",
-    "severity": "minor",
-    "status": "suppressed",
-    "summary": "'LockedRegistry' is defined but never referenced anywhere in the scanned set"
-  },
-  {
-    "category": "dead_code",
-    "confidence": null,
-    "detail": "No ast.Name, ast.Attribute, or string-subscript-key node anywhere in the scanned files resolves to this identifier. Scope limit: getattr-by-string and decorator-based registration are still not traced, so this can false-positive on names only reached that way -- confirm before deleting.",
-    "detector": "dead_code",
-    "disposition": null,
-    "disposition_note": "",
-    "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
-      "line_end": null,
-      "line_start": null,
-      "related_files": [],
-      "snippet": null
-    },
-    "first_seen": "2026-09-03T03:41:21.769990+00:00",
-    "id": "ghost-12f546150201",
-    "layer": "mechanical",
-    "severity": "minor",
-    "status": "suppressed",
-    "summary": "'ReplayValidator' is defined but never referenced anywhere in the scanned set"
-  },
-  {
-    "category": "dead_code",
-    "confidence": null,
-    "detail": "No ast.Name, ast.Attribute, or string-subscript-key node anywhere in the scanned files resolves to this identifier. Scope limit: getattr-by-string and decorator-based registration are still not traced, so this can false-positive on names only reached that way -- confirm before deleting.",
-    "detector": "dead_code",
-    "disposition": null,
-    "disposition_note": "",
-    "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
-      "line_end": null,
-      "line_start": null,
-      "related_files": [],
-      "snippet": null
-    },
-    "first_seen": "2026-09-03T03:41:21.770001+00:00",
-    "id": "ghost-6f8e3092fa75",
+    "first_seen": "2026-09-03T07:11:52.506172+00:00",
+    "id": "ghost-15df98830594",
     "layer": "mechanical",
     "severity": "minor",
     "status": "suppressed",
@@ -196,14 +28,14 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/ANVIL.py",
       "line_end": null,
       "line_start": null,
       "related_files": [],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.770009+00:00",
-    "id": "ghost-ed91e7e3deca",
+    "first_seen": "2026-09-03T07:11:52.506329+00:00",
+    "id": "ghost-6a22525a4c84",
     "layer": "mechanical",
     "severity": "minor",
     "status": "suppressed",
@@ -217,14 +49,14 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/ANVIL.py",
       "line_end": null,
       "line_start": null,
       "related_files": [],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.770022+00:00",
-    "id": "ghost-4e8e023af6b5",
+    "first_seen": "2026-09-03T07:11:52.506342+00:00",
+    "id": "ghost-f6d39f4704b5",
     "layer": "mechanical",
     "severity": "minor",
     "status": "suppressed",
@@ -238,35 +70,14 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/ANVIL.py",
       "line_end": null,
       "line_start": null,
       "related_files": [],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.770029+00:00",
-    "id": "ghost-bafc007df85e",
-    "layer": "mechanical",
-    "severity": "minor",
-    "status": "suppressed",
-    "summary": "'RuntimeExecutionException' is defined but never referenced anywhere in the scanned set"
-  },
-  {
-    "category": "dead_code",
-    "confidence": null,
-    "detail": "No ast.Name, ast.Attribute, or string-subscript-key node anywhere in the scanned files resolves to this identifier. Scope limit: getattr-by-string and decorator-based registration are still not traced, so this can false-positive on names only reached that way -- confirm before deleting.",
-    "detector": "dead_code",
-    "disposition": null,
-    "disposition_note": "",
-    "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
-      "line_end": null,
-      "line_start": null,
-      "related_files": [],
-      "snippet": null
-    },
-    "first_seen": "2026-09-03T03:41:21.770036+00:00",
-    "id": "ghost-e87599768466",
+    "first_seen": "2026-09-03T07:11:52.506352+00:00",
+    "id": "ghost-8dfd23213a98",
     "layer": "mechanical",
     "severity": "minor",
     "status": "suppressed",
@@ -280,14 +91,14 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py",
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py",
       "line_end": 217,
       "line_start": 120,
       "related_files": [],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.788852+00:00",
-    "id": "ghost-948d5c0d259d",
+    "first_seen": "2026-09-03T07:11:52.525270+00:00",
+    "id": "ghost-ad32775db15a",
     "layer": "mechanical",
     "severity": "minor",
     "status": "suppressed",
@@ -301,14 +112,14 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py",
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py",
       "line_end": 651,
       "line_start": 429,
       "related_files": [],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.788915+00:00",
-    "id": "ghost-786170420dd1",
+    "first_seen": "2026-09-03T07:11:52.525328+00:00",
+    "id": "ghost-83f4e1a270a0",
     "layer": "mechanical",
     "severity": "major",
     "status": "suppressed",
@@ -322,20 +133,20 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
-      "line_end": 1648,
-      "line_start": 1628,
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/ANVIL.py",
+      "line_end": 1522,
+      "line_start": 1502,
       "related_files": [
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py"
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/ANVIL.py"
       ],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.820408+00:00",
-    "id": "ghost-7688c8a8072c",
+    "first_seen": "2026-09-03T07:11:52.573161+00:00",
+    "id": "ghost-47db06b1206a",
     "layer": "mechanical",
     "severity": "minor",
     "status": "suppressed",
-    "summary": "2 functions share identical AST structure (names/literals differ, control flow and shape don't): ANVIL.py:1628:_validate, ANVIL.py:1650:_authorize"
+    "summary": "2 functions share identical AST structure (names/literals differ, control flow and shape don't): ANVIL.py:1502:_validate, ANVIL.py:1524:_authorize"
   },
   {
     "category": "duplication",
@@ -345,20 +156,20 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
-      "line_end": 2439,
-      "line_start": 2429,
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/ANVIL.py",
+      "line_end": 2313,
+      "line_start": 2303,
       "related_files": [
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py"
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/ANVIL.py"
       ],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.820440+00:00",
-    "id": "ghost-159b9171e841",
+    "first_seen": "2026-09-03T07:11:52.573281+00:00",
+    "id": "ghost-d4217883646c",
     "layer": "mechanical",
     "severity": "minor",
     "status": "suppressed",
-    "summary": "2 functions share identical AST structure (names/literals differ, control flow and shape don't): ANVIL.py:2429:query, ANVIL.py:2495:get_metrics"
+    "summary": "2 functions share identical AST structure (names/literals differ, control flow and shape don't): ANVIL.py:2303:query, ANVIL.py:2369:get_metrics"
   },
   {
     "category": "duplication",
@@ -368,20 +179,20 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
-      "line_end": 237,
-      "line_start": 237,
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/ANVIL.py",
+      "line_end": 196,
+      "line_start": 196,
       "related_files": [
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py:239-239"
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/ANVIL.py:198-198"
       ],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.829828+00:00",
-    "id": "ghost-25f900282dd1",
+    "first_seen": "2026-09-03T07:11:52.588824+00:00",
+    "id": "ghost-df4e5248efc5",
     "layer": "mechanical",
     "severity": "minor",
     "status": "suppressed",
-    "summary": "'deep_freeze' repeats the same single statement 2 times (lines 237-237, 239-239): same shape, names/literals differ"
+    "summary": "'deep_freeze' repeats the same single statement 2 times (lines 196-196, 198-198): same shape, names/literals differ"
   },
   {
     "category": "duplication",
@@ -391,20 +202,20 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
-      "line_end": 238,
-      "line_start": 238,
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/ANVIL.py",
+      "line_end": 197,
+      "line_start": 197,
       "related_files": [
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py:240-240"
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/ANVIL.py:199-199"
       ],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.829858+00:00",
-    "id": "ghost-9f4415400dff",
+    "first_seen": "2026-09-03T07:11:52.588865+00:00",
+    "id": "ghost-1c6fa44f7037",
     "layer": "mechanical",
     "severity": "minor",
     "status": "suppressed",
-    "summary": "'deep_freeze' repeats the same single statement 2 times (lines 238-238, 240-240): same shape, names/literals differ"
+    "summary": "'deep_freeze' repeats the same single statement 2 times (lines 197-197, 199-199): same shape, names/literals differ"
   },
   {
     "category": "duplication",
@@ -414,20 +225,20 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
-      "line_end": 1938,
-      "line_start": 1938,
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/ANVIL.py",
+      "line_end": 1812,
+      "line_start": 1812,
       "related_files": [
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py:1950-1950"
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/ANVIL.py:1824-1824"
       ],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.837711+00:00",
-    "id": "ghost-cbec0f85cc12",
+    "first_seen": "2026-09-03T07:11:52.602289+00:00",
+    "id": "ghost-0251f373ea63",
     "layer": "mechanical",
     "severity": "minor",
     "status": "suppressed",
-    "summary": "'_execute_module' repeats the same single statement 2 times (lines 1938-1938, 1950-1950): same shape, names/literals differ"
+    "summary": "'_execute_module' repeats the same single statement 2 times (lines 1812-1812, 1824-1824): same shape, names/literals differ"
   },
   {
     "category": "duplication",
@@ -437,21 +248,21 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py",
-      "line_end": 2105,
-      "line_start": 2105,
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/ANVIL.py",
+      "line_end": 1979,
+      "line_start": 1979,
       "related_files": [
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py:2107-2107",
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/ANVIL.py:2109-2109"
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/ANVIL.py:1981-1981",
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/ANVIL.py:1983-1983"
       ],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.838159+00:00",
-    "id": "ghost-1ec35e9290a6",
+    "first_seen": "2026-09-03T07:11:52.602742+00:00",
+    "id": "ghost-c278fbdfa6f9",
     "layer": "mechanical",
     "severity": "major",
     "status": "suppressed",
-    "summary": "'__init__' repeats the same single statement 3 times (lines 2105-2105, 2107-2107, 2109-2109): same shape, names/literals differ"
+    "summary": "'__init__' repeats the same single statement 3 times (lines 1979-1979, 1981-1981, 1983-1983): same shape, names/literals differ"
   },
   {
     "category": "duplication",
@@ -461,16 +272,16 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py",
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py",
       "line_end": 228,
       "line_start": 228,
       "related_files": [
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py:237-237"
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py:237-237"
       ],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.853842+00:00",
-    "id": "ghost-484cfd1df46e",
+    "first_seen": "2026-09-03T07:11:52.629545+00:00",
+    "id": "ghost-b0820012a60e",
     "layer": "mechanical",
     "severity": "minor",
     "status": "suppressed",
@@ -484,16 +295,16 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py",
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py",
       "line_end": 249,
       "line_start": 249,
       "related_files": [
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py:253-253"
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py:253-253"
       ],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.853871+00:00",
-    "id": "ghost-12cee53e8786",
+    "first_seen": "2026-09-03T07:11:52.629585+00:00",
+    "id": "ghost-cf08bbc9d808",
     "layer": "mechanical",
     "severity": "minor",
     "status": "suppressed",
@@ -507,16 +318,16 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py",
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py",
       "line_end": 260,
       "line_start": 260,
       "related_files": [
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py:269-269"
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py:269-269"
       ],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.853881+00:00",
-    "id": "ghost-f80e36831038",
+    "first_seen": "2026-09-03T07:11:52.629602+00:00",
+    "id": "ghost-ece1bcb110b5",
     "layer": "mechanical",
     "severity": "minor",
     "status": "suppressed",
@@ -530,16 +341,16 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py",
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py",
       "line_end": 386,
       "line_start": 386,
       "related_files": [
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py:387-387"
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py:387-387"
       ],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.856790+00:00",
-    "id": "ghost-8a5cc7d17294",
+    "first_seen": "2026-09-03T07:11:52.635217+00:00",
+    "id": "ghost-8b247f937c1a",
     "layer": "mechanical",
     "severity": "minor",
     "status": "suppressed",
@@ -553,17 +364,17 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py",
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py",
       "line_end": 435,
       "line_start": 435,
       "related_files": [
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py:463-463",
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py:473-473"
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py:463-463",
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py:473-473"
       ],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.861081+00:00",
-    "id": "ghost-e906c6e4c404",
+    "first_seen": "2026-09-03T07:11:52.643644+00:00",
+    "id": "ghost-772729ca59d4",
     "layer": "mechanical",
     "severity": "major",
     "status": "suppressed",
@@ -577,17 +388,17 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py",
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py",
       "line_end": 443,
       "line_start": 443,
       "related_files": [
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py:453-453",
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py:485-485"
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py:453-453",
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py:485-485"
       ],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.861100+00:00",
-    "id": "ghost-1f96e08c9ad2",
+    "first_seen": "2026-09-03T07:11:52.643681+00:00",
+    "id": "ghost-a055a0020845",
     "layer": "mechanical",
     "severity": "major",
     "status": "suppressed",
@@ -601,16 +412,16 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py",
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py",
       "line_end": 570,
       "line_start": 570,
       "related_files": [
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py:644-644"
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py:644-644"
       ],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.861110+00:00",
-    "id": "ghost-8e8c7a8932f5",
+    "first_seen": "2026-09-03T07:11:52.643702+00:00",
+    "id": "ghost-b5a3cee5daa6",
     "layer": "mechanical",
     "severity": "minor",
     "status": "suppressed",
@@ -624,16 +435,16 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py",
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py",
       "line_end": 573,
       "line_start": 573,
       "related_files": [
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py:647-647"
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py:647-647"
       ],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.861119+00:00",
-    "id": "ghost-fd7fde902838",
+    "first_seen": "2026-09-03T07:11:52.643719+00:00",
+    "id": "ghost-f921e4f61768",
     "layer": "mechanical",
     "severity": "minor",
     "status": "suppressed",
@@ -647,18 +458,18 @@
     "disposition": null,
     "disposition_note": "",
     "evidence": {
-      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py",
+      "file": "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py",
       "line_end": 577,
       "line_start": 577,
       "related_files": [
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py:608-608",
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py:636-636",
-        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/clones/ANVIL/anvil_validation_harness.py:650-650"
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py:608-608",
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py:636-636",
+        "/tmp/claude-1000/-home-wking53214/f7f86960-5cd3-4e63-a084-1fe153210437/scratchpad/ghost_survey/anvil/anvil_validation_harness.py:650-650"
       ],
       "snippet": null
     },
-    "first_seen": "2026-09-03T03:41:21.861128+00:00",
-    "id": "ghost-e0cb61e128ed",
+    "first_seen": "2026-09-03T07:11:52.643737+00:00",
+    "id": "ghost-8842d30bcfb2",
     "layer": "mechanical",
     "severity": "major",
     "status": "suppressed",
