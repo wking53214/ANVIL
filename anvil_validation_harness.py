@@ -305,12 +305,12 @@ async def bucket_3_immutability():
     try:
         frozen["list"] = [9, 9, 9]
         mutation_blocked = False
-    except Exception:
+    except (TypeError, AttributeError):
         pass
     try:
         frozen["list"].append(4)  # tuple has no .append - should raise AttributeError
         mutation_blocked = False
-    except Exception:
+    except (TypeError, AttributeError):
         pass
     if mutation_blocked:
         record(bucket, "deep_freeze output rejects in-place mutation", "PASS")

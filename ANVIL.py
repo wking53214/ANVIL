@@ -1569,8 +1569,9 @@ class GsaGovernanceRuntime:
 
                 envelope = envelope.add_audit_event(event)
 
-        except Exception:
-            pass
+        except (AttributeError, ValueError, TypeError) as e:
+            print(f"Warning: oscillation detection failed: {e}")
+            traceback.print_exc()
 
         return envelope
 
