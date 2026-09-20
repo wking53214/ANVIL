@@ -216,3 +216,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ghost_buster artifacts
+.ghost_casefile.json
+.ghost_ledger.json
+.ghost_baseline.json
