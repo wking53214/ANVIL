@@ -108,26 +108,25 @@ T = TypeVar("T")
 # =============================================================================
 class RuntimeStatus(str, Enum):
     """
-    Runtime lifecycle state.
+    Runtime lifecycle state. Only states actually produced by the runtime
+    are defined here. States loaded from serialized data must be handled
+    by defensive deserialization (e.g., .get() with fallback).
     """
 
     INITIALIZED = "INITIALIZED"
-    VALIDATING = "VALIDATING"
-    EXECUTING = "EXECUTING"
     COMPLETED = "COMPLETED"
     FAILED = "FAILED"
-    REJECTED = "REJECTED"
 
 
 class GovernanceSeverity(str, Enum):
     """
-    Governance event severity.
+    Governance event severity. Only severity levels actually produced by
+    the governance runtime are defined. Additional levels may be loaded
+    from serialized data via defensive deserialization.
     """
 
     INFO = "INFO"
-    WARNING = "WARNING"
     ERROR = "ERROR"
-    CRITICAL = "CRITICAL"
 
 
 # =============================================================================
@@ -415,37 +414,6 @@ class ChainVerifier:
         if not new_hash:
             return False
         return previous_hash != new_hash
-
-
-class StateLineage:
-    """
-    Represents immutable execution ancestry.
-    """
-
-    def __init__(
-        self,
-        root_state: str = "ROOT_STATE",
-    ):
-        self._chain = [root_state]
-
-    @property
-    def chain(self) -> tuple[str, ...]:
-        return tuple(self._chain)
-
-    @property
-    def current_hash(self) -> str:
-        return self._chain[-1]
-
-    def append(
-        self,
-        new_hash: str,
-    ) -> None:
-        if not ChainVerifier.verify_append(
-            self.current_hash,
-            new_hash,
-        ):
-            raise IntegrityException("Invalid lineage transition")
-        self._chain.append(new_hash)
 
 
 # =============================================================================
@@ -802,54 +770,6 @@ class BranchNode:
     actor: str = ""
 
     iteration: int = 0
-
-
-class GovernanceGraph:
-    """
-    Immutable-oriented execution graph.
-
-    Tracks forks and merges.
-    """
-
-    def __init__(self):
-        self._nodes: Dict[str, BranchNode] = {}
-
-    def add_node(
-        self,
-        node: BranchNode,
-    ) -> None:
-
-        if node.node_id in self._nodes:
-            raise IntegrityException(f"Duplicate graph node {node.node_id}")
-
-        self._nodes[node.node_id] = node
-
-    def get(
-        self,
-        node_id: str,
-    ) -> Optional[BranchNode]:
-
-        return self._nodes.get(node_id)
-
-    def lineage(
-        self,
-        node_id: str,
-    ) -> List[BranchNode]:
-
-        result = []
-
-        current = self.get(node_id)
-
-        while current:
-
-            result.append(current)
-
-            if not current.parent_nodes:
-                break
-
-            current = self.get(current.parent_nodes[0])
-
-        return list(reversed(result))
 
 
 # =============================================================================
@@ -1569,8 +1489,9 @@ class GsaGovernanceRuntime:
 
                 envelope = envelope.add_audit_event(event)
 
-        except Exception:
-            pass
+        except (AttributeError, ValueError, TypeError) as e:
+            print(f"Warning: oscillation detection failed: {e}")
+            traceback.print_exc()
 
         return envelope
 
@@ -1597,10 +1518,10 @@ class GsaGovernanceRuntime:
     async def _complete(
         self,
         envelope: GsaContextEnvelope,
-        started: float,
+        start: float,
     ) -> GsaContextEnvelope:
 
-        elapsed = time.time() - started
+        elapsed = time.time() - start
 
         # NOTE (v1.1 fix): status was never advanced past its default
         # (INITIALIZED) on the success path - only the failure path set a
@@ -1648,7 +1569,7 @@ class GsaGovernanceRuntime:
     async def _fail(
         self,
         envelope: GsaContextEnvelope,
-        error: Exception,
+        exc: Exception,
     ) -> GsaContextEnvelope:
 
         event = AuditEvent(
@@ -1656,8 +1577,8 @@ class GsaGovernanceRuntime:
             severity=GovernanceSeverity.ERROR,
             trace_id=envelope.metadata.trace_id,
             details={
-                "error": str(error),
-                "type": type(error).__name__,
+                "error": str(exc),
+                "type": type(exc).__name__,
                 "trace": traceback.format_exc(),
             },
         )
@@ -1667,7 +1588,7 @@ class GsaGovernanceRuntime:
         state = replace(
             envelope.execution_state,
             status=RuntimeStatus.FAILED,
-            error_message=str(error),
+            error_message=str(exc),
         )
 
         return replace(
